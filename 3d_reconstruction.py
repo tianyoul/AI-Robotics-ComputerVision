@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from camera_calibration import *
 from matplotlib import pyplot as plt
 
 def undistort(img):
@@ -25,11 +26,21 @@ while True:
     retL, imgL = vidCapLeft.read()
     retR, imgR = vidCapRight.read()
     cv2.imshow("L", imgL)
+    (w,h) = imgL.shape[:2]
+    imgR = imgR[:w, :h]
     cv2.imshow("R", imgR)
-    imgL = cv2.cvtColor(undistort(imgL), cv2.COLOR_BGR2GRAY)
-    imgR = cv2.cvtColor(undistort(imgR), cv2.COLOR_BGR2GRAY)
-    stereo = cv2.StereoBM(cv2.STEREO_BM_BASIC_PRESET, ndisparities=16, SADWindowSize=15)
-    disparity = stereo.compute(imgL, imgR, disptype=cv2.CV_32F)
+
+    imgL = cv2.cvtColor(imgL, cv2.COLOR_BGR2GRAY)
+    imgR = cv2.cvtColor(imgR, cv2.COLOR_BGR2GRAY)
+
+    # #Python 2.7
+    # stereo = cv2.StereoBM(cv2.STEREO_BM_BASIC_PRESET, ndisparities=16, SADWindowSize=15)
+    # disparity = stereo.compute(imgL, imgR, disptype=cv2.CV_32F)
+
+    #Python 3.6
+    stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
+    disparity = stereo.compute(imgL, imgR)
+
     norm_coeff = 255 / disparity.max()
     cv2.imshow("disparity", disparity * norm_coeff / 255)
     # plt.ion()

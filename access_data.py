@@ -2,12 +2,13 @@ import cv2
 import os
 import numpy as np
 import glob
-import tensorflow as tf
 from sklearn.utils import shuffle
+from global_variables import *
+
 
 # directory
-dir_prefix = "img/"
-classes = ['fist', 'hand', 'peace', 'none']
+# dir_prefix = "img/"
+# classes = ['fist', 'hand', 'peace', 'none']
 
 
 def load_train(train_path, image_size, classes):

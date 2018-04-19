@@ -39,7 +39,7 @@ while (cap.isOpened()):
         cv2.circle(drawing, far, 5, [0, 0, 255], -1)
         print(i)
 
-    cv2.imshow('drawing', drawing)
+    cv2.imshow('drawing', thresh1)
 
 
     k = cv2.waitKey(10)

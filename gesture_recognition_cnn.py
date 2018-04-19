@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import numpy as np
 import tensorflow as tf
-import access_data
+from access_data import *
 import os
 
 from numpy.random import seed
@@ -14,7 +14,6 @@ set_random_seed(2)
 
 
 tf.logging.set_verbosity(tf.logging.INFO)
-classes = ['fist', 'hand', 'none', 'peace']
 num_classes = len(classes)
 num_channels = 3
 train_path = 'img'
@@ -22,7 +21,7 @@ validation_size = 0.2
 batch_size = 10
 img_size = 500
 
-data = access_data.read_train_sets(train_path, img_size, classes, validation_size=validation_size)
+data = read_train_sets(train_path, img_size, classes, validation_size=validation_size)
 
 print("Complete reading input data. Will Now print a snippet of it")
 print("Number of files in Training-set:\t\t{}".format(len(data.train.labels)))
@@ -85,7 +84,7 @@ def create_convolutional_layer(input,
 
 def create_flatten_layer(layer):
     layer_shape = layer.get_shape()
-    num_features = layer_shape[1:4].num_elements()
+    num_features = layer_shape[1:num_classes].num_elements()
     layer = tf.reshape(layer, [-1, num_features])
 
     return layer
@@ -127,7 +126,7 @@ layer_conv3 = create_convolutional_layer(input=layer_conv2,
 layer_flat = create_flatten_layer(layer_conv3)
 
 layer_fc1 = create_fc_layer(input=layer_flat,
-                            num_inputs=layer_flat.get_shape()[1:4].num_elements(),
+                            num_inputs=layer_flat.get_shape()[1:num_classes].num_elements(),
                             num_outputs=fc_layer_size,
                             use_relu=True)
 

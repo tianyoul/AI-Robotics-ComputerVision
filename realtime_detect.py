@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import cv2
 
-classes = ['fist', 'hand', 'none', 'peace']
+classes = ['fist', 'hand', 'left', 'right', 'up', 'down']
 
 def find_gesture(result):
     result = result[0]

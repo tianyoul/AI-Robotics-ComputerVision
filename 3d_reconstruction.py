@@ -1,19 +1,19 @@
 import numpy as np
 import cv2
-from camera_calibration import *
+from chessboard_img import *
 from matplotlib import pyplot as plt
 
-def undistort(img):
-    '''Undistort image. Camera calibration'''
-    # copy parameters to arrays
-    K = np.array([[1755.04324, 0., 650.63], [0, 1754.95349, 545.9389], [0, 0, 1]])
-    d = np.array([.16858, 0.57600, 0, 0, 0])  # just use first two terms
-
-    h,w = img.shape[:2]
-    newcamera, roi = cv2.getOptimalNewCameraMatrix(K, d, (w,h), 0)
-    newImg = cv2.undistort(img, K, d, None, newcamera)
-
-    return newImg
+# def undistort(img):
+#     '''Undistort image. Camera calibration'''
+#     # copy parameters to arrays
+#     K = np.array([[1755.04324, 0., 650.63], [0, 1754.95349, 545.9389], [0, 0, 1]])
+#     d = np.array([.16858, 0.57600, 0, 0, 0])  # just use first two terms
+#
+#     h,w = img.shape[:2]
+#     newcamera, roi = cv2.getOptimalNewCameraMatrix(K, d, (w,h), 0)
+#     newImg = cv2.undistort(img, K, d, None, newcamera)
+#
+#     return newImg
 
 vidCapLeft = cv2.VideoCapture(0)
 vidCapRight = cv2.VideoCapture(1)

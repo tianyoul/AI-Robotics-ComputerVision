@@ -2,8 +2,10 @@ import cv2
 import numpy as np
 
 cap = cv2.VideoCapture(0)  # creating camera object
+
 while (cap.isOpened()):
     ret1, img = cap.read()  # reading the frames
+    #img = cv2.resize(img, (1280, 720))
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
     ret2, thresh1 = cv2.threshold(blur, 70, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
@@ -29,15 +31,15 @@ while (cap.isOpened()):
 
     mind = 0
     maxd = 0
-    for i in range(defects.shape[0]):
-        s, e, f, d = defects[i, 0]
-        start = tuple(cnt[s][0])
-        end = tuple(cnt[e][0])
-        far = tuple(cnt[f][0])
-        dist = cv2.pointPolygonTest(cnt, (50, 50), True)
-        cv2.line(drawing, start, end, [0, 255, 0], 2)
-        cv2.circle(drawing, far, 5, [0, 0, 255], -1)
-        print(i)
+    # for i in range(defects.shape[0]):
+    #     s, e, f, d = defects[i, 0]
+    #     start = tuple(cnt[s][0])
+    #     end = tuple(cnt[e][0])
+    #     far = tuple(cnt[f][0])
+    #     dist = cv2.pointPolygonTest(cnt, (50, 50), True)
+    #     cv2.line(drawing, start, end, [0, 255, 0], 2)
+    #     cv2.circle(drawing, far, 5, [0, 0, 255], -1)
+    #     print(i)
 
     cv2.imshow('drawing', thresh1)
 

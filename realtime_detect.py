@@ -1,8 +1,10 @@
 import tensorflow as tf
 import numpy as np
 import cv2
+from global_variables import*
+from preprocessing import*
 
-classes = ['fist', 'hand', 'left', 'right', 'up', 'down']
+#classes = ['fist', 'hand', 'left', 'right', 'up', 'down']
 
 def find_gesture(result):
     result = result[0]
@@ -34,8 +36,6 @@ y_pred = graph.get_tensor_by_name("y_pred:0")
 
 vidCap = cv2.VideoCapture(0)
 
-top_left = (50, 100)
-bottom_right = (500, 600)  # In opencv, need to be reversed in np
 green = (100, 180, 50)
 num_channels=3
 image_size = 500
@@ -49,6 +49,8 @@ while True:
 
     cv2.rectangle(img, top_left, bottom_right, green)
     gesture = img[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]]
+    gesture = preprocess(gesture)
+    gesture = cv2.cvtColor(gesture, cv2.COLOR_GRAY2BGR)
 
     images = []
     # Resizing the image to our desired size and preprocessing will be done exactly as done during training
@@ -62,12 +64,13 @@ while True:
     ## Let's feed the images to the input placeholders
     x = graph.get_tensor_by_name("x:0")
     y_true = graph.get_tensor_by_name("y_true:0")
-    y_test_images = np.zeros((1, 4))
+    y_test_images = np.zeros((1, classes_num))
 
     feed_dict_testing = {x: x_batch, y_true: y_test_images}
     result = sess.run(y_pred, feed_dict=feed_dict_testing)
     print(classes[find_gesture(result)])
-    cv2.imshow("Camera", img)
+
+    cv2.imshow("Camera", cv2.flip(img, 1))
 
 cv2.destroyAllWindows()
 vidCap.release()

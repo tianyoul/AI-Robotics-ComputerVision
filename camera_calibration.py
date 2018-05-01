@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from stereovision.calibration import StereoCalibration
+from stereo_calibration import StereoCalibration
 from global_variables import *
 
 # # termination criteria
@@ -125,31 +125,68 @@ from global_variables import *
 #     vidCapRight.release()
 
 
-# Here we assume that all calibration data has been save to calibration_info
-# See readme if not sure what to do
-calibration = StereoCalibration(input_folder = 'calibration_info')
+
+calibration = StereoCalibration('chessboard')
+model = calibration.camera_model
+
+numDisparity = 16
+blockSize = 15
+
+img_shape = (640,480)
+R1, R2, P1, P2, Q, roi1, roi2 = cv2.stereoRectify(model['M1'], model['dist1'], model['M2'], model['dist2'],
+                                                  img_shape, model['R'], model['T'])
+left_map = cv2.initUndistortRectifyMap(model['M1'], model['dist1'], R1, P1, img_shape, cv2.CV_16SC2)
+right_map = cv2.initUndistortRectifyMap(model['M2'], model['dist2'], R2, P2, img_shape, cv2.CV_16SC2)
+
 vidCapLeft = cv2.VideoCapture(0)
 vidCapRight = cv2.VideoCapture(1)
+
 while True:
+
     retL, imgL = vidCapLeft.read()
-    # (1080, 1920)
-    imgL = cv2.resize(imgL, (1280, 720))
-    #cv2.imshow("L", imgL)
+    #img_shape = cv2.cvtColor(imgL,cv2.COLOR_BGR2GRAY).shape[::-1]
     retR, imgR = vidCapRight.read()
-    # (720, 1280) This is the webcam of macbook pro
+
     x = cv2.waitKey(10)
     char = chr(x & 0xFF)
     if (char == 'q'):
         break
 
-    # Rectify the two images taken from the two cameras
-    rectified_pair = calibration.rectify((imgL,imgR))
+    if retL and retR:
+        imgL = cv2.cvtColor(imgL, cv2.COLOR_BGR2GRAY)
+        imgR = cv2.cvtColor(imgR, cv2.COLOR_BGR2GRAY)
+        origImg = imgR
+        cv2.imshow("left", imgL)
+        cv2.imshow("right",imgR)
 
-    # Initialize a stereo block matcher
-    block_matcher = cv2.StereoBM_create(16, 15)
-    # Compute a disparity image
-    disparity = block_matcher.compute(cv2.cvtColor(rectified_pair[0],cv2.COLOR_BGR2GRAY),cv2.cvtColor(rectified_pair[1],cv2.COLOR_BGR2GRAY))
-    # Show normalized version of image
-    cv2.imshow("Left", rectified_pair[0])
-    cv2.imshow("Right", rectified_pair[1])
-    cv2.imshow("camera", disparity/255.)
+
+        newimgL = cv2.remap(imgL, left_map[0], left_map[1], 4)
+        newimgR = cv2.remap(imgR, right_map[0], right_map[1], 4)
+        cv2.imshow("newleft", newimgL)
+        cv2.imshow("newright",newimgR)
+        # # Rectify the two images taken from the two cameras
+        # rectified_pair = calibration.rectify((imgL,imgR))
+        # Initialize a stereo block matcher
+        # x = cv2.waitKey(10)
+        # char = chr(x & 0xFF)
+        # if (char == 'w'):
+        #     numDisparity += 16
+        # elif (char == 's'):
+        #     numDisparity -= 16
+        # elif (char == 'a'):
+        #     blockSize -= 2
+        # elif (char == 'd'):
+        #     blockSize += 2
+        block_matcher = cv2.StereoBM_create(numDisparity, blockSize)
+
+        # Compute a disparity image
+
+        disparity = block_matcher.compute(imgL,imgR)
+        # # Show normalized version of image
+        # cv2.imshow("Left", rectified_pair[0])
+        # cv2.imshow("Right", rectified_pair[1])
+        cv2.imshow("camera", disparity/255.)
+
+cv2.destroyAllWindows()
+vidCapRight.release()
+vidCapLeft.release()

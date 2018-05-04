@@ -50,6 +50,7 @@ while True:
     cv2.rectangle(img, top_left, bottom_right, green)
     gesture = img[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]]
     gesture = preprocess(gesture)
+    cv2.imshow("Processed", cv2.flip(gesture, 1))
     gesture = cv2.cvtColor(gesture, cv2.COLOR_GRAY2BGR)
 
     images = []

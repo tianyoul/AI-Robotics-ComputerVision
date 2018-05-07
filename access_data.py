@@ -6,11 +6,11 @@ from sklearn.utils import shuffle
 from global_variables import *
 
 
-# directory
-# dir_prefix = "img/"
-# classes = ['fist', 'hand', 'peace', 'none']
+
+# Code based on https://github.com/sankit1/cv-tricks.com/tree/master/Tensorflow-tutorials/tutorial-2-image-classifier
 
 
+#This function loads all the training data.
 def load_train(train_path, image_size, classes):
     images = []
     labels = []

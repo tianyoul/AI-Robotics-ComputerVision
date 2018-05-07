@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 
+
+'''This file tests uses the preprocessing technique in a realtime setting.'''
+
 cap = cv2.VideoCapture(0)  # creating camera object
 
 while (cap.isOpened()):

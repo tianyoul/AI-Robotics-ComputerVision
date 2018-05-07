@@ -12,6 +12,7 @@ seed(1)
 from tensorflow import set_random_seed
 set_random_seed(2)
 
+# Code based on https://github.com/sankit1/cv-tricks.com/tree/master/Tensorflow-tutorials/tutorial-2-image-classifier
 
 tf.logging.set_verbosity(tf.logging.INFO)
 num_classes = len(classes)

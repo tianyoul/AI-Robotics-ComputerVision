@@ -5,7 +5,8 @@ import time
 from preprocessing import*
 from global_variables import *
 
-
+'''This file takes pictures and put it into the dataset folder. Folder path is defined in global_variable.py file. 
+Data_to_load is the target category.'''
 vidCap = cv2.VideoCapture(0)
 
 # variables

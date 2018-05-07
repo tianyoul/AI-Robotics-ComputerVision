@@ -4,9 +4,15 @@ import cv2
 from global_variables import*
 from preprocessing import*
 
-#classes = ['fist', 'hand', 'left', 'right', 'up', 'down']
+# Code based on https://github.com/sankit1/cv-tricks.com/tree/master/Tensorflow-tutorials/tutorial-2-image-classifier
+from pynput.mouse import Button, Controller
+mouse = Controller()
+
 
 def find_gesture(result):
+    '''Given the output of the model, find the category with the highest probability. If it's less than 80%,
+    we consider it to be none since it is not confident enough. Note: we used softmax so the probability adds up to 1.
+    We also used the none category.'''
     result = result[0]
     max_val = 0.0
     max_ind = 0
@@ -14,8 +20,10 @@ def find_gesture(result):
         if result[i] > max_val:
             max_val = result[i]
             max_ind = i
-
-    return max_ind
+    if max_val > 0.8:
+        return max_ind
+    else:
+        return 6
 
 ## Let us restore the saved model
 sess = tf.Session()
@@ -30,7 +38,6 @@ graph = tf.get_default_graph()
 # Now, let's get hold of the op that we can be processed to get the output.
 # In the original network y_pred is the tensor that is the prediction of the network
 y_pred = graph.get_tensor_by_name("y_pred:0")
-
 
 
 
@@ -70,6 +77,21 @@ while True:
     feed_dict_testing = {x: x_batch, y_true: y_test_images}
     result = sess.run(y_pred, feed_dict=feed_dict_testing)
     print(classes[find_gesture(result)])
+    ind = find_gesture(result)
+    # Move the mouse according to the result of our model.
+    if ind == 2:
+        mouse.move(-20, 0)
+    elif ind == 3:
+        mouse.move(20, 0)
+    elif ind == 4:
+        mouse.move(0, -20)
+    elif ind == 5:
+        mouse.move(0, 20)
+    elif ind == 2:
+        mouse.click(Button.left)
+    elif ind == 1:
+        mouse.click(Button.left, 2)
+    #print(result)
 
     cv2.imshow("Camera", cv2.flip(img, 1))
 
